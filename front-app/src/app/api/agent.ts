@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Note } from '../../models/note';
+import { Note } from '../models/note';
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {

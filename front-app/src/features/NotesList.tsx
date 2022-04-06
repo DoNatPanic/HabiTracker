@@ -1,16 +1,11 @@
-import React, { Fragment, SyntheticEvent, useState } from 'react';
-import { Note } from '../models/note';
+import React, { SyntheticEvent, useState } from 'react';
 import { Button, ListGroup, ListGroupItem, Container, Row, Col } from 'react-bootstrap';
+import { useStore } from '../app/stores/store';
+import { observer } from 'mobx-react-lite';
 
-
-interface Props {
-    notes: Note[];
-    openForm: (id: string) => void;
-    deleteNote: (id: string) => void;
-    submitting: boolean;
-}
-
-export default function NotesList({ notes, openForm, deleteNote, submitting }: Props) {
+export default observer(function NotesList() {
+    const { noteStore } = useStore();
+    const { notes, openForm, deleteNote, loading } = noteStore;
 
     const [target, setTarget] = useState('');
 
@@ -35,7 +30,7 @@ export default function NotesList({ notes, openForm, deleteNote, submitting }: P
                                     name={note.id}
                                     variant="danger"
                                     onClick={(e) => handleDelete(e, note.id)}>
-                                    {submitting && target === note.id ? 'Loading…' : 'Delete'}
+                                    {loading && target === note.id ? 'Loading…' : 'Delete'}
                                 </Button>
                             </Col>
                         </Row>
@@ -44,4 +39,4 @@ export default function NotesList({ notes, openForm, deleteNote, submitting }: P
             ))}
         </ListGroup>
     )
-}
+})

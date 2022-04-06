@@ -1,16 +1,12 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { Note } from '../models/note';
+import { useStore } from '../app/stores/store';
+import LoadingComponent from '../app/layout/LoadingComponent';
+import { observer } from 'mobx-react-lite';
 
-interface Props {
-    note: Note | undefined;
-    closeForm: () => void;
-    createOrEdit: (note: Note) => void;
-    submitting: boolean;
-}
-
-export default function NoteDetailsForm({ note: selectedNote, closeForm,
-    createOrEdit, submitting }: Props) {
+export default observer(function NoteDetailsForm() {
+    const { noteStore } = useStore();
+    const { selectedNote, closeForm, createNote, updateNote, loading } = noteStore;
 
     const initialState = selectedNote ?? {
         userId: '',
@@ -19,16 +15,18 @@ export default function NoteDetailsForm({ note: selectedNote, closeForm,
         noteMessage: ''
     }
 
-    const [note, setNote] = useState(initialState);
-
-    function handleSubmit() {
-        createOrEdit(note);
-    }
+    const [note, setNote] = useState(initialState)
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
         setNote({ ...note, [name]: value });
     }
+
+    function handleSubmit() {
+        note.id ? updateNote(note) : createNote(note);
+    }
+
+    if(!note) return <LoadingComponent />;
 
     return (
         <Form onSubmit={handleSubmit}
@@ -38,21 +36,21 @@ export default function NoteDetailsForm({ note: selectedNote, closeForm,
                     className="fw-bold"
                     type='date'
                     placeholder='Date'
-                    value={note.date}
+                    value={note?.date}
                     name='date'
                     onChange={handleInputChange} />
                 <Form.Control
                     as="textarea"
                     rows={3}
                     placeholder='NoteMessage'
-                    value={note.noteMessage}
+                    value={note?.noteMessage}
                     name='noteMessage'
                     onChange={handleInputChange} />
                 <Button
-                    name={note.id}
+                    name={note?.id}
                     variant="primary"
                     type="submit">
-                    {submitting ? 'Loading…' : 'Submit'}
+                    {loading ? 'Loading…' : 'Submit'}
                 </Button>
                 <Button
                     variant="secondary"
@@ -63,4 +61,4 @@ export default function NoteDetailsForm({ note: selectedNote, closeForm,
             </Form.Group>
         </Form>
     );
-}
+})

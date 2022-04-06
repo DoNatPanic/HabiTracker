@@ -1,10 +1,11 @@
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import { useStore } from '../stores/store';
+import { observer } from 'mobx-react-lite';
 
-interface Props {
-    openForm: () => void;
-}
+export default observer (function Navigation() {
+    const { noteStore } = useStore();
+    const { openForm } = noteStore;
 
-export default function Navigation({openForm}: Props) {
     return (
         <Navbar bg="dark" variant="dark" >
             <Container className="justify-content-start">
@@ -22,9 +23,9 @@ export default function Navigation({openForm}: Props) {
                     <Navbar.Text>Control you life</Navbar.Text>
                 </Nav.Item>
                 <Nav.Item>
-                    <Button variant="primary" onClick={openForm}>Create Note</Button>
+                    <Button variant="primary" onClick={() => openForm()}>Create Note</Button>
                 </Nav.Item>
             </Container>
         </Navbar>
     );
-}
+})
