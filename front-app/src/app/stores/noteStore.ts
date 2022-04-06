@@ -4,7 +4,8 @@ import { makeAutoObservable, runInAction } from 'mobx';
 const { v4: uuidv4 } = require('uuid');
 
 export default class NoteStore {
-    notes: Note[] = [];
+    //notes: Note[] = [];
+    noteRegistry = new Map<string, Note>();
     selectedNote: Note | undefined = undefined;
     editMode = false;
     loading = false;
@@ -14,6 +15,11 @@ export default class NoteStore {
         makeAutoObservable(this)
     }
 
+    get activitiesByDate() {
+        return Array.from(this.noteRegistry.values()).sort((a, b) =>
+            Date.parse(b.date) - Date.parse(a.date));
+    }
+
     loadNotes = async () => {
         this.setLoadingInitial(true);
         try {
@@ -21,7 +27,8 @@ export default class NoteStore {
 
             notes.forEach(note => {
                 note.date = note.date.split('T')[0];
-                this.notes.push(note);
+                //this.notes.push(note);
+                this.noteRegistry.set(note.id, note);
             })
             this.setLoadingInitial(false);
         }
@@ -36,7 +43,8 @@ export default class NoteStore {
     }
 
     selectNote = (id: string) => {
-        this.selectedNote = this.notes.find(a => a.id === id);
+        //this.selectedNote = this.notes.find(a => a.id === id);
+        this.selectedNote = this.noteRegistry.get(id);
     }
 
     cancelSelectedNote = () => {
@@ -60,7 +68,8 @@ export default class NoteStore {
         try {
             await agent.Notes.create(note);
             runInAction(() => {
-                this.notes.push(note);
+                //this.notes.push(note);
+                this.noteRegistry.set(note.id, note);
                 this.selectedNote = note;
                 this.editMode = false;
                 this.loading = false;
@@ -79,7 +88,8 @@ export default class NoteStore {
         try {
             await agent.Notes.update(note);
             runInAction(() => {
-                this.notes = [...this.notes.filter(x => x.id !== note.id), note];
+                //this.notes = [...this.notes.filter(x => x.id !== note.id), note];
+                this.noteRegistry.set(note.id, note);
                 this.selectedNote = note;
                 this.editMode = false;
                 this.loading = false;
@@ -98,7 +108,8 @@ export default class NoteStore {
         try {
             await agent.Notes.delete(id);
             runInAction(() => {
-                this.notes = [...this.notes.filter(x => x.id !== id)];
+                //this.notes = [...this.notes.filter(x => x.id !== id)];
+                this.noteRegistry.delete(id);
                 this.loading = false;
             })
         }

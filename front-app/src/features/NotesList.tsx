@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 
 export default observer(function NotesList() {
     const { noteStore } = useStore();
-    const { notes, openForm, deleteNote, loading } = noteStore;
+    const { activitiesByDate, openForm, deleteNote, loading } = noteStore;
 
     const [target, setTarget] = useState('');
 
@@ -16,7 +16,7 @@ export default observer(function NotesList() {
 
     return (
         <ListGroup as="ul">
-            {notes.map(note => (
+            {activitiesByDate.map(note => (
                 <ListGroupItem as="li" className="d-flex" key={note.id}>
                     <Container>
                         <div className="fw-bold">{note.date}</div>
