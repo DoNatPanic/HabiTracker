@@ -1,7 +1,6 @@
 import { Note } from '../models/note';
 import agent from '../api/agent'
 import { makeAutoObservable, runInAction } from 'mobx';
-const { v4: uuidv4 } = require('uuid');
 
 export default class NoteStore {
     //notes: Note[] = [];
@@ -15,7 +14,7 @@ export default class NoteStore {
         makeAutoObservable(this)
     }
 
-    get activitiesByDate() {
+    get notesByDate() {
         return Array.from(this.noteRegistry.values()).sort((a, b) =>
             Date.parse(b.date) - Date.parse(a.date));
     }
@@ -25,10 +24,8 @@ export default class NoteStore {
         try {
             const notes = await agent.Notes.list();
 
-            notes.forEach(note => {
-                note.date = note.date.split('T')[0];
-                //this.notes.push(note);
-                this.noteRegistry.set(note.id, note);
+            notes.forEach((note: Note) => {
+                this.setNote(note);
             })
             this.setLoadingInitial(false);
         }
@@ -42,7 +39,7 @@ export default class NoteStore {
         this.loadingInitial = state;
     }
 
-    selectNote = (id: string) => {
+    /*selectNote = (id: string) => {
         //this.selectedNote = this.notes.find(a => a.id === id);
         this.selectedNote = this.noteRegistry.get(id);
     }
@@ -59,12 +56,11 @@ export default class NoteStore {
     closeForm = () => {
         this.cancelSelectedNote();
         this.editMode = false;
-    }
+    }*/
 
-    createNote = async (note: Note) => {
+
+    createNote = async (note: Note) =>  {
         this.loading = true;
-        note.userId = uuidv4();
-        note.id = uuidv4();
         try {
             await agent.Notes.create(note);
             runInAction(() => {
@@ -119,5 +115,37 @@ export default class NoteStore {
                 this.loading = false;
             })
         }
+    }
+
+    loadNote = async (id: string) => {
+        let note:any = this.getNote(id);
+        if (note) {
+            this.selectedNote = note;
+            return note;
+        } else {
+            this.setLoadingInitial(true);
+            try {
+                note = await agent.Notes.details(id);
+                this.setNote(note);
+                runInAction(() => {
+                    this.selectedNote = note;
+                })
+                this.setLoadingInitial(false);
+                return note;
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+
+    private setNote = (note: Note) => {
+        note.date = note.date.split('T')[0];
+        //this.notes.push(note);
+        this.noteRegistry.set(note.id, note);
+    }
+
+    private getNote = (id: string) => {
+        return this.noteRegistry.get(id);
     }
 }

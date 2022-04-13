@@ -1,11 +1,11 @@
 import React, { SyntheticEvent, useState } from 'react';
 import { Button, ListGroup, ListGroupItem, Container, Row, Col } from 'react-bootstrap';
 import { useStore } from '../app/stores/store';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 
 export default observer(function NotesList() {
     const { noteStore } = useStore();
-    const { activitiesByDate, openForm, deleteNote, loading } = noteStore;
+    const { notesByDate, deleteNote, loading } = noteStore;
 
     const [target, setTarget] = useState('');
 
@@ -16,14 +16,14 @@ export default observer(function NotesList() {
 
     return (
         <ListGroup as="ul">
-            {activitiesByDate.map(note => (
+            {notesByDate.map(note => (
                 <ListGroupItem as="li" className="d-flex" key={note.id}>
                     <Container>
                         <div className="fw-bold">{note.date}</div>
                         <div>{note.noteMessage}</div>
                         <Row>
                             <Col>
-                                <Button onClick={() => openForm(note.id)}>View</Button>
+                                <Button href={'/notes/' + note.id}>View</Button>
                             </Col>
                             <Col>
                                 <Button

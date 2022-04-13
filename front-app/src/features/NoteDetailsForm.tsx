@@ -1,21 +1,31 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useStore } from '../app/stores/store';
 import LoadingComponent from '../app/layout/LoadingComponent';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
+import { useHistory, useParams } from 'react-router-dom';
+const { v4: uuidv4 } = require('uuid');
 
 export default observer(function NoteDetailsForm() {
+    let navigate = useHistory();
     const { noteStore } = useStore();
-    const { selectedNote, closeForm, createNote, updateNote, loading } = noteStore;
+    const { createNote, updateNote, loading, loadNote, loadingInitial } = noteStore;
+    const { id } = useParams<{ id: string }>();
 
-    const initialState = selectedNote ?? {
+    const [note, setNote] = useState({
         userId: '',
         id: '',
         date: '',
         noteMessage: ''
-    }
+    })
 
-    const [note, setNote] = useState(initialState)
+    useEffect(() => {
+        let isMounted = true;
+        if (id) loadNote(id).then(note => {
+            if (isMounted) setNote(note!)
+        });
+        return () => { isMounted = false };
+    }, [id, loadNote]);
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
@@ -23,10 +33,20 @@ export default observer(function NoteDetailsForm() {
     }
 
     function handleSubmit() {
-        note.id ? updateNote(note) : createNote(note);
+        if (note.id.length === 0) {
+            let newNote = {
+                ...note,
+                userId: uuidv4(),
+                id: uuidv4(),
+            };
+            createNote(newNote);
+        } else {
+            updateNote(note);
+        }
+        navigate.push('/notes');
     }
 
-    if(!note) return <LoadingComponent />;
+    if (loadingInitial) return <LoadingComponent />;
 
     return (
         <Form onSubmit={handleSubmit}
@@ -55,7 +75,7 @@ export default observer(function NoteDetailsForm() {
                 <Button
                     variant="secondary"
                     type='button'
-                    onClick={closeForm}>
+                    href='/notes'>
                     Cancel
                 </Button>
             </Form.Group>

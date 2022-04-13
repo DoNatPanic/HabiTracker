@@ -1,26 +1,29 @@
-import React, { useEffect } from 'react';
-import LoadingComponent from './LoadingComponent';
 import Navigation from './Navigation';
+import HomePage from '../../features/home/HomePage';
 import { Container } from 'react-bootstrap';
-import { useStore } from '../stores/store';
 import MainDashboard from '../../features/MainDashboard';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
+import { Route, useLocation } from 'react-router-dom';
+import NoteDetailsForm from '../../features/NoteDetailsForm';
 
 function App() {
-  const { noteStore } = useStore();
-
-  useEffect(() => {
-    noteStore.loadNotes();
-  }, [noteStore]);
-
-  if (noteStore.loadingInitial) return <LoadingComponent />
+  const location = useLocation();
 
   return (
     <>
-      <Navigation />
-      <Container style={{ marginTop: '2em' }} >
-        <MainDashboard />
-      </Container>
+      <Route exact path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <>
+            <Navigation />
+            <Container style={{ marginTop: '2em' }} >
+              <Route exact path='/' component={HomePage} />
+              <Route exact path='/notes' component={MainDashboard} />
+              <Route key={location.key} path={['/createNote', '/notes/:id']} component={NoteDetailsForm} />
+            </Container>
+          </>
+        )} />
     </>
   );
 }
