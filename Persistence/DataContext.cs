@@ -8,10 +8,27 @@ namespace Persistence
     {
         public DataContext(DbContextOptions options) : base(options)
         {
-            
+
         }
 
-        public DbSet<Note> Notes { get; set;}
-        
+        public DbSet<Note> Notes { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Note>()
+            .HasOne(a => a.AppUser)
+            .WithMany(b => b.Notes)
+            .HasForeignKey(note => note.AppUserId);;
+
+            /*builder.Entity<Note>(b =>
+            {
+                b.HasOne<AppUser>()
+                 .WithMany()
+                 .HasForeignKey(note => note.AppUserId);
+            });*/
+
+        }
+
     }
 }

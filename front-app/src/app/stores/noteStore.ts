@@ -16,7 +16,17 @@ export default class NoteStore {
 
     get notesByDate() {
         return Array.from(this.noteRegistry.values()).sort((a, b) =>
-            Date.parse(b.date) - Date.parse(a.date));
+            Date.parse(a.date) - Date.parse(b.date));
+    }
+
+    get groupedNotes() {
+        return Object.entries(
+            this.notesByDate.reduce((notes, note) => {
+                const date = note.date;
+                notes[date] = notes[date] ? [...notes[date], note] : [note];
+                return notes;
+            }, {} as { [key: string]: Note[] })
+        )
     }
 
     loadNotes = async () => {
@@ -58,8 +68,7 @@ export default class NoteStore {
         this.editMode = false;
     }*/
 
-
-    createNote = async (note: Note) =>  {
+    createNote = async (note: Note) => {
         this.loading = true;
         try {
             await agent.Notes.create(note);
@@ -118,7 +127,7 @@ export default class NoteStore {
     }
 
     loadNote = async (id: string) => {
-        let note:any = this.getNote(id);
+        let note: any = this.getNote(id);
         if (note) {
             this.selectedNote = note;
             return note;

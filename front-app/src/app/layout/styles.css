@@ -1,15 +1,366 @@
+:root {
+  --color1: #E3614D;
+  --color2: #882549;
+  --color3: #88257A;
+  --color4: #642588;
+  --color5: #886425;
+  --color5dark: #6C490D;
+  --light-fontcolor: #BD918A;
+  --lightgray-fontcolor: #84765E;
+  --dark-fontcolor: #322C2B;
+  --white: #ffffff;
+  --accept-btn: #599e85;
+  --decline-btn: #de8b72;
+}
+
 body {
-  background-color: #EAEAEA !important;
+  height: 100vh;
+  margin: 0;
+  font-family: sans-serif;
+  flex-direction: column;
+  background: var(--light-fontcolor);
+  /* fallback for old browsers */
+  background: linear-gradient(0deg, rgba(136, 100, 37, 0.1) 0%, rgba(136, 51, 37, 0.1) 100%);
 }
 
-.navbar {
-  background-image: linear-gradient(135deg, rgb(24,42,115) 0%, rgb(33,138,174) 69%, rgb(32,167,172) 89%) !important;
+h1 {
+  text-align: center;
+  font-size: 6vmin;
 }
 
-.list-group{
+h2 {
+  text-align: center;
+  font-size: 5vmin;
+}
+
+h3 {
+  text-align: center;
+  font-size: 4vmin;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 2000px;
+  min-width: 300px;
+  width: 90%;
+  margin: 5%;
+  min-height: 75vh;
+  align-items: center;
+}
+
+.content-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.list-group {
   max-height: 500px;
   max-width: 500px;
   margin-bottom: 10px;
-  overflow:scroll;
+  overflow: scroll;
 }
 
+.react-calendar {
+  width: 100%;
+  border: none;
+  box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
+}
+
+.my-list {
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid #d1d7dc;
+}
+
+/*Navigation bar*/
+.logo-image {
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+}
+
+
+.nav-ul {
+  list-style-type: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--color1);
+}
+
+.nav-ul li {
+  float: left;
+}
+
+.nav-ul li a {
+  display: block;
+  color: var(--white);
+  text-align: center;
+  padding: 14px 14px;
+  text-decoration: none;
+}
+
+.nav-ul li a:hover {
+  background-color: var(--lightgray-fontcolor);
+}
+
+/* mouse over link */
+.nav-ul li a:hover {
+  color: var(--white);
+}
+
+/* selected link */
+.nav-ul li a:active {
+  color: var(--white);
+}
+
+.nav-ul li ul {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: var(--light-fontcolor);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.nav-ul li ul a {
+  color: var(--dark-fontcolor);
+  padding: 12px 16px;
+  text-decoration: none;
+  background-color: var(--white);
+  display: block;
+}
+
+.nav-ul li ul li {
+  list-style-type: none;
+  clear: both;
+  width: 100%;
+}
+
+.nav-ul li:hover>ul,
+.nav-ul li ul:hover {
+  visibility: visible;
+  opacity: 1;
+  display: block;
+}
+
+/*container*/
+@media (min-width: 800px) {
+  .nav-container {
+    padding: 0px 50px;
+  }
+}
+
+/* spinner */
+.loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform: -webkit-translate(-50%, -50%);
+  transform: -moz-translate(-50%, -50%);
+  transform: -ms-translate(-50%, -50%);
+  color: var(--color5);
+}
+
+/**/
+
+/* buttons */
+.button-main {
+  position: relative;
+  background-color: var(--accept-btn);
+  border: white;
+  border-radius: 5%;
+  color: #FFFFFF;
+  padding: 10px;
+  width: 80px;
+  height: auto;
+  text-align: center;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 2.2vmin;
+}
+
+.button-variant {
+  position: relative;
+  background-color: var(--decline-btn);
+  border: white;
+  border-radius: 5%;
+  color: #FFFFFF;
+  padding: 10px;
+  width: 80px;
+  text-align: center;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 2.2vmin;
+}
+
+/**/
+
+/* footer */
+.main-footer {
+  color: var(--light-fontcolor);
+  background-color: var(--color5);
+  padding-top: 2em;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.footer-content p {
+  max-width: 500px;
+  margin: 10px auto;
+  color: var(--white);
+}
+
+.footer-bottom {
+  background: var(--color5dark);
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  text-align: left;
+}
+
+.footer-menu {
+  float: right;
+}
+
+.footer-menu ul {
+  display: flex;
+}
+
+.footer-menu ul li {
+  padding-right: 10px;
+  display: block;
+}
+
+.footer-menu ul li a {
+  color: var(--lightgray-fontcolor);
+  text-decoration: none;
+}
+
+.footer-menu ul li a:hover {
+  color: var(--white);
+}
+
+@media (max-width:500px) {
+  .footer-menu ul {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/**/
+
+/* user form */
+.user-form {
+  height: auto;
+  background-color: rgba(255, 255, 255, 0.15);
+  position: relative;
+  border-radius: 10px;
+  min-width: 300px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding: 50px 35px;
+}
+
+.user-form * {
+  font-family: 'Poppins', sans-serif;
+  color: var(--dark-fontcolor);
+  letter-spacing: 0.5px;
+  outline: none;
+  border: none;
+}
+
+.user-form h3 {
+  text-align: center;
+  font-size: 4vmin;
+}
+
+.user-form label {
+  display: block;
+  margin-top: 30px;
+}
+
+.user-form input {
+  display: block;
+  height: 50px;
+  width: 100%;
+  background-color: var(--white);
+  border-radius: 3px;
+  padding: 0 10px;
+  margin-top: 8px;
+  font-size: 2.5vmin;
+}
+
+::placeholder {
+  color: var(--dark-fontcolor);
+}
+
+.user-form button {
+  margin-top: 50px;
+  width: 100%;
+  background-color: var(--white);
+  color: var(--dark-fontcolor);
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.user-form button:hover {
+  background-color: var(--color1);
+  color: var(--white);
+}
+
+.user-form button:active {
+  background-color: var(--color1);
+  color: var(--white);
+}
+
+/**/
+
+/* layout */
+.column {
+  float: left;
+}
+
+.left,
+.right {
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* list group */
+.list-group {
+  max-height: 500px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}

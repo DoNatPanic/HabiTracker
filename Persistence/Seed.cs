@@ -5,21 +5,20 @@ namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager){
-            if(!userManager.Users.Any())
-            {
-                var users = new List<AppUser>
+        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
+        {
+            if (userManager.Users.Any() || context.Notes.Any())
+                return;
+
+            var users = new List<AppUser>
                 {
-                    new AppUser{DisplayName = "Rob", UserName = "rob", Email = "rob@test.com"},
+                    new AppUser{DisplayName = "Lily", UserName = "lily", Email = "lily@test.com", Notes = {}},
                 };
 
-                foreach ( var user in users)
-                {
-                    await userManager.CreateAsync(user, "Pa$$w0rd");
-                }
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user, "Pa$$w0rd");
             }
-            
-            if(context.Notes.Any()) return;
 
             var activities = new List<Note>{
                 new Note
@@ -32,10 +31,11 @@ namespace Persistence
                     Date = System.DateTime.Now.AddMonths(-2),
                     NoteMessage = "Note2"
                 }
-            };
+                };
 
             await context.Notes.AddRangeAsync(activities);
             await context.SaveChangesAsync();
+
         }
     }
 }

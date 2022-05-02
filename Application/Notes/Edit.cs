@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -9,16 +10,18 @@ namespace Application.Notes
     {
         public class Command : IRequest
         {
-            public Note Note {get; set;}
+            public Note Note { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
                 _mapper = mapper;
             }
@@ -27,10 +30,12 @@ namespace Application.Notes
             {
                 var note = await _context.Notes.FindAsync(request.Note.Id);
 
+                request.Note.AppUserId = _userAccessor.GetUserId();
+
                 _mapper.Map(request.Note, note);
-                
+
                 await _context.SaveChangesAsync();
-                
+
                 return Unit.Value;
             }
         }
